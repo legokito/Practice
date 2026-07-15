@@ -1,0 +1,12 @@
+# Build artifacts
+**/sgemm
+*.o
+*.out
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# OS
+.DS_Store

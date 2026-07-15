@@ -1,0 +1,8 @@
+kernel_id,name,size,gflops,max_rel_err,status
+0,cuBLAS,4096,6420.0,0.00e+00,example
+1,01_naive,4096,310.0,1.10e-04,example
+2,02_gmem_coalesce,4096,1980.0,1.10e-04,example
+3,03_shared_mem_block,4096,2740.0,1.10e-04,example
+4,04_1d_blocktiling,4096,4180.0,1.10e-04,example
+5,05_2d_blocktiling,4096,5460.0,1.10e-04,example
+6,06_vectorized,4096,5980.0,1.10e-04,example
