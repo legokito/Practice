@@ -19,8 +19,9 @@ fi
 
 echo "kernel_id,name,size,gflops,max_rel_err,status" > "$OUT"
 
-# 0 = cuBLAS baseline, then each kernel id.
-for id in 0 1 2 3 4 5 6; do
+# Kernel ids come straight from the binary's registry, so this loop never needs
+# editing when you add a kernel.
+for id in $("$BIN" list); do
   row="$("$BIN" "$id" "$SIZE" "$REPEATS" 2>/dev/null)"
   if [ -n "$row" ]; then
     echo "$row" | tee -a "$OUT"
