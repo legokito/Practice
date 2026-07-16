@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cuda_runtime.h>
 
-__global__ void sgemm_naive(int M, int N, int K, float alpha, const float *A,
+__global__ void sgemm_coalesce(int M, int N, int K, float alpha, const float *A,
                             const float *B, float beta, float *C) {
   const uint x = blockIdx.x * blockDim.x + threadIdx.y; // row of C, in [0, M)
   const uint y = blockIdx.y * blockDim.y + threadIdx.x; // col of C, in [0, N)
@@ -20,7 +20,7 @@ void run_kernel_2(int M, int N, int K, float alpha, const float *A,
                   const float *B, float beta, float *C) {
   dim3 block(32, 32);
   dim3 grid((M + 31) / 32, (N + 31) / 32);
-  sgemm_naive<<<grid, block>>>(M, N, K, alpha, A, B, beta, C);
+  sgemm_coalesce<<<grid, block>>>(M, N, K, alpha, A, B, beta, C);
 }
 
 
