@@ -1,3 +1,4 @@
 kernel_id,name,size,gflops,max_rel_err,status
-0,cuBLAS,4096,3968.6,0.00e+00,OK
-1,01_naive,4096,61.7,0.00e+00,OK
+0,cuBLAS,4096,4211.2,0.00e+00,OK
+1,01_naive,4096,61.9,0.00e+00,OK
+2,02_gmem_coalesce,4096,473.9,0.00e+00,OK
