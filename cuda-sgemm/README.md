@@ -33,6 +33,9 @@ But the bigger realization is that matmul doesn't *have* to be memory-bound at a
 ### Kernel 2 — Global memory coalescing
 By making each warp's 32 threads read contiguous memory, one fetch now feeds many threads at once instead of mostly wasting bytes — so each warp does far more useful work per byte fetched. More useful computations per byte retrieved in a given interval bumped GFLOPs from ~62 to ~474 (~8x which logically makes sense, ~11% of cuBLAS).
 
+### Kernel 3 — Shared memory blocking (tiling)
+k2 fixed the access *pattern*, but each thread still re-read its whole row/col from global. Now the block cooperatively stages a 32×32 tile of A and B into shared memory (fast on-chip), and every thread reuses each staged value ~32x before we slide to the next tile along K. This is the first kernel to pull the *reuse* lever — cutting total global-memory traffic ~32x (each value fetched once per tile instead of re-fetched per use), not just reading more efficiently. GFLOPs: ~474 → ~___ (fill in after running).
+
 ## Run
 
 Open `run_colab.ipynb` in Colab (T4 runtime), Run All → compiles, benchmarks, regenerates the chart.
