@@ -11,7 +11,7 @@ Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.co
 | 0 | cuBLAS | 4211 | 100% |
 | 1 | naive | 62 | 1.5% |
 | 2 | gmem coalesce | 474 | 11% |
-| 3 | shared-mem blocking | — | — |
+| 3 | shared-mem blocking | 808 | 19% |
 | 4 | 1D blocktiling | — | — |
 | 5 | 2D blocktiling | — | — |
 | 6 | vectorized | — | — |
