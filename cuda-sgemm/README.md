@@ -11,8 +11,8 @@ Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.co
 | 0 | cuBLAS | 4211 | 100% |
 | 1 | naive | 62 | 1.5% |
 | 2 | gmem coalesce | 474 | 11% |
-| 3 | shared-mem blocking | 808 | 19% |
-| 4 | 1D blocktiling | — | — |
+| 3 | shared-mem blocking | 860 | 21% |
+| 4 | 1D blocktiling | 1749 | 42% |
 | 5 | 2D blocktiling | — | — |
 | 6 | vectorized | — | — |
 | 9 | autotuning | — | — |
@@ -34,7 +34,10 @@ But the bigger realization is that matmul doesn't *have* to be memory-bound at a
 By making each warp's 32 threads read contiguous memory, one fetch now feeds many threads at once instead of mostly wasting bytes — so each warp does far more useful work per byte fetched. More useful computations per byte retrieved in a given interval bumped GFLOPs from ~62 to ~474 (~8x which logically makes sense, ~11% of cuBLAS).
 
 ### Kernel 3 — Shared memory blocking (tiling)
-k2 fixed the access *pattern*, but each thread still re-read its whole row/col from global. Now the block cooperatively stages a 32×32 tile of A and B into shared memory (fast on-chip), and every thread reuses each staged value ~32x before we slide to the next tile along K. This is the first kernel to pull the *reuse* lever — cutting total global-memory traffic ~32x (each value fetched once per tile instead of re-fetched per use), not just reading more efficiently. GFLOPs: ~474 → ~___ (fill in after running).
+k2 fixed the access *pattern*, but each thread still re-read its whole row/col from global. Now the block cooperatively stages a 32×32 tile of A and B into shared memory (fast on-chip), and every thread reuses each staged value ~32x before we slide to the next tile along K. This is the first kernel to pull the *reuse* lever — cutting total global-memory traffic ~32x (each value fetched once per tile instead of re-fetched per use), not just reading more efficiently. GFLOPs: ~474 → ~860 (~21% of cuBLAS).
+
+### Kernel 4 — 1D blocktiling
+k3 was stalling on *shared* memory: every FMA needed 2 shared loads. Now each thread computes TM=8 results (a column) instead of 1, so one Bs value loaded from shared memory gets reused across all 8 (multiplied by 8 different As values held in registers). That's ~8 FMAs per shared load instead of 1 per 2 — arithmetic intensity way up, shared-memory stalls way down. 860 → 1749 GFLOPs (~2x, ~42% of cuBLAS).
 
 ## Run
 
