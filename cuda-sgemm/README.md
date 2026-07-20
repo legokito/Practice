@@ -13,7 +13,7 @@ Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.co
 | 2 | gmem coalesce | 474 | 11% |
 | 3 | shared-mem blocking | 860 | 21% |
 | 4 | 1D blocktiling | 1749 | 42% |
-| 5 | 2D blocktiling | — | — |
+| 5 | 2D blocktiling | 2412 | 55% |
 | 6 | vectorized | — | — |
 | 9 | autotuning | — | — |
 | 10 | warptiling | — | — |
