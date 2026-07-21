@@ -43,8 +43,6 @@ static const KernelEntry REGISTRY[] = {
     {4, "04_1d_blocktiling", run_kernel_4},
     {5, "05_2d_blocktiling", run_kernel_5},
     {6, "06_vectorized", run_kernel_6},
-    {9, "09_autotuning", run_kernel_9},
-    {10, "10_warptiling", run_kernel_10},
 };
 static const int NUM_ENTRIES = sizeof(REGISTRY) / sizeof(REGISTRY[0]);
 

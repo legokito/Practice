@@ -52,13 +52,13 @@ __global__ void sgemm_1d_blocktiling(int M, int N, int K, float alpha,
     B += BK * N;
 
     for (uint dotIdx = 0; dotIdx < BK; dotIdx++){
-	// moving through entirety of B, down the column 
-	float bValue = Bs[dotIdx * BN + threadCol]; 
+	    // moving through entirety of B, down the column 
+	    float bValue = Bs[dotIdx * BN + threadCol]; 
 
-	// moving through TM steps of A, down the column. 
-	for (uint aIdx = 0; aIdx < TM; aIdx++){
-	    threadResults[aIdx] += As[(threadRow * TM + aIdx) * BK + dotIdx] * bValue;
-	}
+	    // moving through TM steps of A, down the column. 
+	    for (uint aIdx = 0; aIdx < TM; aIdx++){
+	      threadResults[aIdx] += As[(threadRow * TM + aIdx) * BK + dotIdx] * bValue;
+	    }
     }	
 
     __syncthreads();

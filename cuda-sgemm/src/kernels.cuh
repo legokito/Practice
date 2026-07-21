@@ -21,5 +21,3 @@ void run_kernel_3(int, int, int, float, const float *, const float *, float, flo
 void run_kernel_4(int, int, int, float, const float *, const float *, float, float *);  // 1D blocktiling
 void run_kernel_5(int, int, int, float, const float *, const float *, float, float *);  // 2D blocktiling
 void run_kernel_6(int, int, int, float, const float *, const float *, float, float *);  // vectorized loads
-void run_kernel_9(int, int, int, float, const float *, const float *, float, float *);  // autotuning
-void run_kernel_10(int, int, int, float, const float *, const float *, float, float *); // warptiling

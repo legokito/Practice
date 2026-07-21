@@ -51,7 +51,7 @@ __global__ void sgemm_vectorized(int M, int N, int K, float alpha,
 
     //vectorize B
     reinterpret_cast<float4 *>(&Bs[innerRowB * BN + innerColB * 4])[0] =
-	reinterpret_cast<const float4 *>(&B[innerRowB * N + innerColB * 4])[0];
+	  reinterpret_cast<const float4 *>(&B[innerRowB * N + innerColB * 4])[0];
 
     __syncthreads();
 
@@ -61,14 +61,14 @@ __global__ void sgemm_vectorized(int M, int N, int K, float alpha,
    
     for (uint dotIdx = 0; dotIdx < BK; dotIdx++){ 
       for (uint cacher = 0; cacher < TM; cacher++){ 
-    	cacheA[cacher] = As[dotIdx * BM + (threadRow * TM) + cacher];
+      	cacheA[cacher] = As[dotIdx * BM + (threadRow * TM) + cacher];
         cacheB[cacher] = Bs[dotIdx * BN + (threadCol * TN) + cacher];
       }
 
       for (uint resM = 0; resM < TM; resM++){
-	for (uint resN = 0; resN < TN; resN++){
-	  threadResults[resM][resN] += cacheA[resM] * cacheB[resN]; 
-	}	
+        for (uint resN = 0; resN < TN; resN++){
+          threadResults[resM][resN] += cacheA[resM] * cacheB[resN]; 
+        }	
       }
     }
     __syncthreads();

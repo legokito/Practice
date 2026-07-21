@@ -57,14 +57,14 @@ __global__ void sgemm_2d_blocktiling(int M, int N, int K, float alpha,
    
     for (uint dotIdx = 0; dotIdx < BK; dotIdx++){ // for all 8 outer products
       for (uint cacher = 0; cacher < TM; cacher++){ //ez since TM = TN
-    	cacheA[cacher] = As[(threadRow * TM + cacher) * BK + dotIdx];
+       	cacheA[cacher] = As[(threadRow * TM + cacher) * BK + dotIdx];
         cacheB[cacher] = Bs[dotIdx * BN + (threadCol * TN) + cacher];
       }
 
       for (uint resM = 0; resM < TM; resM++){
-	for (uint resN = 0; resN < TN; resN++){
-	  threadResults[resM][resN] += cacheA[resM] * cacheB[resN]; 
-	}	
+	      for (uint resN = 0; resN < TN; resN++){
+	        threadResults[resM][resN] += cacheA[resM] * cacheB[resN]; 
+	      }	
       }
     }
     __syncthreads();
