@@ -23,7 +23,7 @@ __global__ void sgemm_shared(int M, int N, int K, float alpha, const float *A,
   const uint globalRow = cRow * BLOCKSIZE + threadRow;
   const uint globalCol = cCol * BLOCKSIZE + threadCol;
 
-  float tmp = 0.0f; // accumulates the FULL dot product across all K-tiles
+  float tmp = 0.0f; 
 
 // iterate over width of A and height of B in terms of blocks. each iteration computes over a block within A and B.  
   for (int bkIdx = 0; bkIdx < K; bkIdx += BLOCKSIZE) {

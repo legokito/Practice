@@ -38,6 +38,9 @@ __global__ void sgemm_2d_blocktiling(int M, int N, int K, float alpha,
 
   float threadResults[TM][TN] = {0.0f};
 
+  float cacheA[8];
+  float cacheB[8]; 
+
   for (uint bkIdx = 0; bkIdx < K; bkIdx += BK){
     for (uint i = innerRowA; i < BM; i += strideA){
       As[i * BK + innerColA] = A[i * K + innerColA]; 
@@ -51,8 +54,6 @@ __global__ void sgemm_2d_blocktiling(int M, int N, int K, float alpha,
     A += BK;
     B += BK * N;
 
-    float cacheA[8]; 
-    float cacheB[8]; 
    
     for (uint dotIdx = 0; dotIdx < BK; dotIdx++){ // for all 8 outer products
       for (uint cacher = 0; cacher < TM; cacher++){ //ez since TM = TN
