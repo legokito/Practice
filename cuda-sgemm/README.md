@@ -43,14 +43,14 @@ Each writeup: what was slow, what did I change, why the number moved.
 | 5 | 2D tiling | reuse | math per shared read is increased again! | 2506 |
 | 6 | vectorized | read efficiently | load instructions in larger chunks using float4 | 3420 |
 
-### Kernel 1 — Naive
+### Kernel 1: Naive
 Implements vanilla matmul - each thread goes pulls a row from A and a col from B and performs A @ B for their respective output cell in C. 
 
 This has extremely slow performance due to 0 memory reuse, poor thread indexing. Overall it makes no active effort to use hardware/software exploitations to help compute the result faster. 
 
 We use this as a baseline to iteratively work toward increasing performance!
 
-### Kernel 2 — Global memory coalescing
+### Kernel 2: Global memory coalescing
 Kernel 2 does identical math and reads identical bytes as kernel 1 - why is it still faster???
 
 Answer: arranging reads to where more values are used per "memory serving". 
@@ -63,7 +63,7 @@ Threads are grouped into warps of 32 by consecutive thread index (threadIdx.x is
 
 In practice, this regrouping allows each warp to make use of all 32 floats of a memory serving (rather than just 1 in k1), causing a significant increase in GFLOPs! 
 
-### Kernel 3 — Shared memory blocking (tiling)
+### Kernel 3: Shared memory blocking (tiling)
 K3 chooses to exploit a memory layer we hadn't enabled before: SMEM (shared memory)!
 
 Each block has ability to load in a certain chunk of memory and read it at extremely fast rates. You pay the cost of reading the values from GMEM and loading it into SMEM again, but if you have enough numbers in SMEM that can be reused, then the cost is negligible and the upgrade is definitely worth having (exactly this case)!
@@ -74,7 +74,7 @@ This simple reusing strategy gave us a nearly 2x speedup from k2, showing just h
 
 Notice that each thread does 2 SMEM reads for every 1 multiply. We're spending more time fetching from SMEM than computing with it. Surely we can squeeze more math out of each read..... (I wonder why Manit's flagging this here hmmmmmmm 👀).
 
-### Kernel 4 — 1D blocktiling
+### Kernel 4: 1D blocktiling
 In K4, we aim to do more math out of each SMEM read to spend less time in data transfer.
 
 K3 does 2 SMEM reads for every 1 multiply (1 from A, 1 from B), so we're bottlenecked on reading, not computing.
@@ -83,14 +83,14 @@ The fix? Read a B value once, cache it, and reuse it for every A value that need
 
 Counting reads for those 8 results: K3 needs 2 each = 16 reads. K4 needs 8 reads from A + 1 cached B read = 9 reads. Nearly half the SMEM traffic for the exact same compute! When it comes to the speedup, the GFLOPs speak for themselves :))
 
-### Kernel 5 - 2D blocktiling
+### Kernel 5: 2D blocktiling
 Exact same philosophy as K4, except now each thread computes an entire 8x8 tile using the same caching strategy across both dimensions rather than just one. 
 
 Like K4, the penalty for computing more per thread is marginal compared to the memory bandwidth bottlenecks - making this speedup extremely worth it from an intuition standpoint as well. The numbers again show an increase, showing just how effective caching is!
 
 Notice the speedup (~1.4x, 1764 to 2506) is much smaller than the drop in reads (~4.5x). That gap is useful info: SMEM reads are becoming less of the bottleneck — we're starting to bump into other limits, so cutting reads buys less than it used to, and we're forced to look for other avenues to trigger speedups.
 
-### Kernel 6 - Vectorized memory accessing
+### Kernel 6: Vectorized memory accessing
 This one lets us load values into SMEM in bunches of 4 (16 byte loads) using float4. This cuts the number of load instructions by ~4x since larger chunks are getting transported at once - leading to a simple but effective speedup!
 
 For matrix B, this is as straightforward as it sounds. Matrix A is trickier - loading it from global is already sequential, but the catch comes later: each thread reads a column of A's tile into registers to compute, and a column sits scattered in memory (float4 can only grab 4 sequential floats, not scattered ones). So we store A transposed, which turns that column into a sequentially accessible segment and lets those compute-side reads vectorize as well!
