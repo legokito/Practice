@@ -1,6 +1,7 @@
 # CUDA SGEMM
 
-Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.com/articles/22/CUDA-MMM): from a naive SGEMM kernel toward cuBLAS throughput, one kernel at a time.
+Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.com/articles/22/CUDA-MMM): from a naive SGEMM kernel toward cuBLAS throughput, one kernel at a time.  
+Goals: understand gpu architecutre, roofline analysis, common patterns behind kernel (and generally computation) speedups.
 
 ![benchmark](assets/benchmark.png)
 
@@ -8,15 +9,13 @@ Working through Simon Boehm's [CUDA matmul optimization post](https://siboehm.co
 
 | # | kernel | GFLOPs | % cuBLAS |
 |---|--------|-------:|---------:|
-| 0 | cuBLAS | 4211 | 100% |
-| 1 | naive | 62 | 1.5% |
-| 2 | gmem coalesce | 474 | 11% |
-| 3 | shared-mem blocking | 860 | 21% |
-| 4 | 1D blocktiling | 1749 | 42% |
-| 5 | 2D blocktiling | 2412 | 55% |
-| 6 | vectorized | — | — |
-| 9 | autotuning | — | — |
-| 10 | warptiling | — | — |
+| 0 | cuBLAS | 4109 | 100% |
+| 1 | naive | 62 | 2% |
+| 2 | gmem coalesce | 497 | 12% |
+| 3 | shared-mem blocking | 868 | 21% |
+| 4 | 1D blocktiling | 1764 | 43% |
+| 5 | 2D blocktiling | 2506 | 61% |
+| 6 | vectorized | 3420 | 83% |
 
 ## Writeups
 
@@ -32,6 +31,10 @@ I will fill out explanations for review + proper documentation after having impl
 ### Kernel 3 — Shared memory blocking (tiling)
 
 ### Kernel 4 — 1D blocktiling
+
+### Kernel 5 - 2D blocktiling
+
+### Kernel 6 - Vectorized memory accessing
 
 ## Run
 

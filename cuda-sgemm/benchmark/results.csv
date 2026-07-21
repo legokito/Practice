@@ -1,7 +1,8 @@
 kernel_id,name,size,gflops,max_rel_err,status
-0,cuBLAS,4096,4370.9,0.00e+00,OK
+0,cuBLAS,4096,4108.9,0.00e+00,OK
 1,01_naive,4096,61.8,0.00e+00,OK
-2,02_gmem_coalesce,4096,482.8,0.00e+00,OK
-3,03_shared_mem_block,4096,828.1,0.00e+00,OK
-4,04_1d_blocktiling,4096,1716.4,0.00e+00,OK
-5,05_2d_blocktiling,4096,2412.6,0.00e+00,OK
+2,02_gmem_coalesce,4096,497.1,0.00e+00,OK
+3,03_shared_mem_block,4096,868.4,0.00e+00,OK
+4,04_1d_blocktiling,4096,1763.9,0.00e+00,OK
+5,05_2d_blocktiling,4096,2505.8,0.00e+00,OK
+6,06_vectorized,4096,3420.5,0.00e+00,OK
